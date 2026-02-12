@@ -1,0 +1,934 @@
+{
+  "updatedAt": "2026-02-12T21:32:12.580Z",
+  "createdAt": "2026-02-12T20:41:39.959Z",
+  "id": "grisdpic5yLtdaNwvyaVq",
+  "name": "Flow git de versionning",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 🚀 Déclencheurs\n\nTrigger n8n : Se déclenche automatiquement lorsqu'un workflow est modifié ou activé.\n\nPublier (Execute Workflow Trigger) : Permet une exécution manuelle ou un appel depuis un autre workflow.\n\nLes deux points d'entrée alimentent le même flux de sauvegarde.",
+        "height": 800,
+        "width": 320,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        176,
+        688
+      ],
+      "typeVersion": 1,
+      "id": "6a4f6a8c-7703-4761-9cae-3ea0aa031758",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## 🔑 Configuration requise\n\n1. Remplacez l'URL par celle de votre instance n8n :\n   `https://VOTRE-INSTANCE.com/api/v1/workflows/`\n\n2. Créez une clé API n8n :\n   Paramètres → API → Créer une clé API\n\n3. Ajoutez les identifiants : API n8n (type Clé API)",
+        "height": 800,
+        "width": 310,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        512,
+        688
+      ],
+      "typeVersion": 1,
+      "id": "a960817a-9345-4f2e-9a98-1af060a18e5c",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "## 📁 GitHub Backup\n\n**Create File**: First attempt — creates the JSON file if it doesn't exist.\n\n**Edit File**: Fallback — if file exists, updates it instead.\n\n➡️ Update these fields:\n- Owner: your GitHub username or org\n- Repository: your backup repo name\n\nCommit message uses your workflow version description automatically. ",
+        "height": 800,
+        "width": 1030,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        832,
+        688
+      ],
+      "typeVersion": 1,
+      "id": "df68a0fc-2ee0-4c4b-93a0-1425eb206d57",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "events": [
+          "update",
+          "activate"
+        ]
+      },
+      "type": "n8n-nodes-base.n8nTrigger",
+      "typeVersion": 1,
+      "position": [
+        288,
+        1024
+      ],
+      "id": "aae0c8c9-99f2-4f02-ad23-105294114630",
+      "name": "N8N TRIGGER"
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        288,
+        1264
+      ],
+      "id": "06459d56-e9a7-41d1-a482-bda306c135b6",
+      "name": "PUBLISH"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "workflowId": {
+          "__rl": true,
+          "value": "={{$json.workflow_id}}",
+          "mode": "id"
+        },
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.n8n",
+      "typeVersion": 1,
+      "position": [
+        704,
+        1152
+      ],
+      "id": "bc38f4ca-7c0a-4e5a-9fc1-a259a09d9caf",
+      "name": "GET A WORKFLOW",
+      "notesInFlow": true,
+      "credentials": {
+        "n8nApi": {
+          "id": "0ISFGz7kEFxj32U3",
+          "name": "n8n account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "file",
+        "owner": {
+          "__rl": true,
+          "mode": "name",
+          "value": "ThaiTdev"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "first-repository-n8n",
+          "mode": "list",
+          "cachedResultName": "first-repository-n8n",
+          "cachedResultUrl": "https://github.com/ThaiTdev/first-repository-n8n"
+        },
+        "filePath": "n8nIA-agent/InsertInVectorDataBase.json",
+        "fileContent": "={{ JSON.stringify($json, null, 2) }}",
+        "commitMessage": "={{ $json.activeVersion.description }} \n=============================\n{{ $json.activeVersion.name }} | {{ $json.activeVersion.authors }}\n\n"
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1.1,
+      "position": [
+        896,
+        1152
+      ],
+      "id": "5e808eac-4159-401e-93f6-cf2c7caf97e6",
+      "name": "CREATE FILE",
+      "webhookId": "82a62f5d-61d6-46e7-b655-44f5d9121e79",
+      "notesInFlow": true,
+      "credentials": {
+        "githubOAuth2Api": {
+          "id": "CLNjnxubvSFd7bg1",
+          "name": "GitHub account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "file",
+        "operation": "get",
+        "owner": {
+          "__rl": true,
+          "value": "={{ $('VARS').item.json.OWNER_GITHUB }}",
+          "mode": "name"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "={{ $('VARS').item.json['REPOSITORY GITHUB'] }}",
+          "mode": "name"
+        },
+        "filePath": "={{ $json.id }}.json",
+        "asBinaryProperty": false,
+        "additionalParameters": {}
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1.1,
+      "position": [
+        1120,
+        1168
+      ],
+      "id": "4768fc2b-dc4b-4102-9332-5313bd016e2c",
+      "name": "Get a file",
+      "webhookId": "8fb9c30d-84f9-4fd4-ad1e-3c960f721d39",
+      "notesInFlow": true,
+      "credentials": {
+        "githubOAuth2Api": {
+          "id": "CLNjnxubvSFd7bg1",
+          "name": "GitHub account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const workflow = $('GET A WORKFLOW').item.json;\nconst sha = $('Get a file').item.json.sha;\n\nreturn [{\n  json: {\n    workflow_id: workflow.id,\n    content: btoa(unescape(encodeURIComponent(JSON.stringify(workflow, null, 2)))),\n    sha: sha,\n    message: (workflow.activeVersion?.description || 'Update') + '\\n=============================\\n' + (workflow.activeVersion?.name || '') + ' | ' + (workflow.activeVersion?.authors || '')\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1328,
+        1168
+      ],
+      "id": "a1cffb3c-f4ed-45d2-9562-037b71d0585a",
+      "name": "Preprare HTTP Request"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://api.github.com/repos/{{ $('VARS').item.json.OWNER_GITHUB }}/{{ $('VARS').item.json['REPOSITORY GITHUB'] }}/contents/{{ $json.workflow_id }}.json",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "githubOAuth2Api",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "message",
+              "value": "={{ $json.message }}"
+            },
+            {
+              "name": "content",
+              "value": "={{ $json.content }}"
+            },
+            {
+              "name": "sha",
+              "value": "={{ $json.sha }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1552,
+        1168
+      ],
+      "id": "97dc6800-eb6b-412a-8086-4bceb0a602c0",
+      "name": "Execute HTTP Request",
+      "notesInFlow": true,
+      "credentials": {
+        "githubOAuth2Api": {
+          "id": "CLNjnxubvSFd7bg1",
+          "name": "GitHub account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "g8S7y933beqthWWz",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/g8S7y933beqthWWz",
+          "cachedResultName": "VERSIONNING"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        496,
+        304
+      ],
+      "id": "14b58180-74bc-45d6-b682-80a2ec555526",
+      "name": "VERSIONNING",
+      "notesInFlow": true,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "events": [
+          "update",
+          "activate"
+        ]
+      },
+      "type": "n8n-nodes-base.n8nTrigger",
+      "typeVersion": 1,
+      "position": [
+        272,
+        304
+      ],
+      "id": "3b914c8b-3a80-4537-8df2-20ae57d01d5f",
+      "name": "N8N TRIGGER1",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "content": "##  NOEUDS A METTRE DANS D'AUTRES WORKFLOW A VERSIONNER.",
+        "height": 400,
+        "width": 544
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        176,
+        128
+      ],
+      "typeVersion": 1,
+      "id": "b22c8515-4ea3-4e2f-93a4-d737c4e13726",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8b3bb531-18c6-4f8d-a5e4-503cd00d7836",
+              "name": "OWNER_GITHUB",
+              "value": "Thatdev",
+              "type": "string"
+            },
+            {
+              "id": "fb9730e9-e63e-41aa-b615-5a2896d321c9",
+              "name": "REPOSITORY GITHUB",
+              "value": "n8n-cours-1-",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        544,
+        1152
+      ],
+      "id": "5ca2d6bf-edab-4a33-93c8-dfa8f519d03c",
+      "name": "VARS",
+      "notesInFlow": true
+    }
+  ],
+  "connections": {
+    "N8N TRIGGER": {
+      "main": [
+        [
+          {
+            "node": "VARS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PUBLISH": {
+      "main": [
+        [
+          {
+            "node": "VARS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GET A WORKFLOW": {
+      "main": [
+        [
+          {
+            "node": "CREATE FILE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CREATE FILE": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Get a file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a file": {
+      "main": [
+        [
+          {
+            "node": "Preprare HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preprare HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Execute HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "N8N TRIGGER1": {
+      "main": [
+        [
+          {
+            "node": "VERSIONNING",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "VARS": {
+      "main": [
+        [
+          {
+            "node": "GET A WORKFLOW",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "3e48fb67-f71e-4c9d-9fb8-a3be5590fd87",
+  "activeVersionId": "3e48fb67-f71e-4c9d-9fb8-a3be5590fd87",
+  "versionCounter": 112,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-02-12T20:41:39.959Z",
+      "createdAt": "2026-02-12T20:41:39.959Z",
+      "role": "workflow:owner",
+      "workflowId": "grisdpic5yLtdaNwvyaVq",
+      "projectId": "fX9d4AxGOtuigCuR",
+      "project": {
+        "updatedAt": "2026-02-09T21:28:16.120Z",
+        "createdAt": "2026-02-09T21:24:26.666Z",
+        "id": "fX9d4AxGOtuigCuR",
+        "name": "thierry thai <thaithierry3@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "8d90f99e-d45a-4723-ae69-16f6b1486e51",
+        "projectRelations": [
+          {
+            "updatedAt": "2026-02-09T21:24:26.666Z",
+            "createdAt": "2026-02-09T21:24:26.666Z",
+            "userId": "8d90f99e-d45a-4723-ae69-16f6b1486e51",
+            "projectId": "fX9d4AxGOtuigCuR",
+            "user": {
+              "updatedAt": "2026-02-12T07:31:21.663Z",
+              "createdAt": "2026-02-09T21:24:21.988Z",
+              "id": "8d90f99e-d45a-4723-ae69-16f6b1486e51",
+              "email": "thaithierry3@gmail.com",
+              "firstName": "thierry",
+              "lastName": "thai",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2026-02-09T21:28:39.841Z",
+                "personalization_survey_n8n_version": "2.6.4",
+                "companySize": "<20",
+                "companyType": "saas",
+                "role": "business-owner",
+                "reportedSource": "google"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "Ec3l3fXLyFdWtme-umGYH",
+                "userActivatedAt": 1770673243030,
+                "easyAIWorkflowOnboarded": true
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-02-12",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": {
+    "updatedAt": "2026-02-12T21:32:33.874Z",
+    "createdAt": "2026-02-12T21:32:12.582Z",
+    "versionId": "3e48fb67-f71e-4c9d-9fb8-a3be5590fd87",
+    "workflowId": "grisdpic5yLtdaNwvyaVq",
+    "nodes": [
+      {
+        "parameters": {
+          "content": "## 🚀 Déclencheurs\n\nTrigger n8n : Se déclenche automatiquement lorsqu'un workflow est modifié ou activé.\n\nPublier (Execute Workflow Trigger) : Permet une exécution manuelle ou un appel depuis un autre workflow.\n\nLes deux points d'entrée alimentent le même flux de sauvegarde.",
+          "height": 800,
+          "width": 320,
+          "color": 7
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          176,
+          688
+        ],
+        "typeVersion": 1,
+        "id": "6a4f6a8c-7703-4761-9cae-3ea0aa031758",
+        "name": "Sticky Note3"
+      },
+      {
+        "parameters": {
+          "content": "## 🔑 Configuration requise\n\n1. Remplacez l'URL par celle de votre instance n8n :\n   `https://VOTRE-INSTANCE.com/api/v1/workflows/`\n\n2. Créez une clé API n8n :\n   Paramètres → API → Créer une clé API\n\n3. Ajoutez les identifiants : API n8n (type Clé API)",
+          "height": 800,
+          "width": 310,
+          "color": 7
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          512,
+          688
+        ],
+        "typeVersion": 1,
+        "id": "a960817a-9345-4f2e-9a98-1af060a18e5c",
+        "name": "Sticky Note4"
+      },
+      {
+        "parameters": {
+          "content": "## 📁 GitHub Backup\n\n**Create File**: First attempt — creates the JSON file if it doesn't exist.\n\n**Edit File**: Fallback — if file exists, updates it instead.\n\n➡️ Update these fields:\n- Owner: your GitHub username or org\n- Repository: your backup repo name\n\nCommit message uses your workflow version description automatically. ",
+          "height": 800,
+          "width": 1030,
+          "color": 7
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          832,
+          688
+        ],
+        "typeVersion": 1,
+        "id": "df68a0fc-2ee0-4c4b-93a0-1425eb206d57",
+        "name": "Sticky Note5"
+      },
+      {
+        "parameters": {
+          "events": [
+            "update",
+            "activate"
+          ]
+        },
+        "type": "n8n-nodes-base.n8nTrigger",
+        "typeVersion": 1,
+        "position": [
+          288,
+          1024
+        ],
+        "id": "aae0c8c9-99f2-4f02-ad23-105294114630",
+        "name": "N8N TRIGGER"
+      },
+      {
+        "parameters": {
+          "inputSource": "passthrough"
+        },
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "typeVersion": 1.1,
+        "position": [
+          288,
+          1264
+        ],
+        "id": "06459d56-e9a7-41d1-a482-bda306c135b6",
+        "name": "PUBLISH"
+      },
+      {
+        "parameters": {
+          "operation": "get",
+          "workflowId": {
+            "__rl": true,
+            "value": "={{$json.workflow_id}}",
+            "mode": "id"
+          },
+          "requestOptions": {}
+        },
+        "type": "n8n-nodes-base.n8n",
+        "typeVersion": 1,
+        "position": [
+          704,
+          1152
+        ],
+        "id": "bc38f4ca-7c0a-4e5a-9fc1-a259a09d9caf",
+        "name": "GET A WORKFLOW",
+        "notesInFlow": true,
+        "credentials": {
+          "n8nApi": {
+            "id": "0ISFGz7kEFxj32U3",
+            "name": "n8n account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "resource": "file",
+          "owner": {
+            "__rl": true,
+            "mode": "name",
+            "value": "ThaiTdev"
+          },
+          "repository": {
+            "__rl": true,
+            "value": "first-repository-n8n",
+            "mode": "list",
+            "cachedResultName": "first-repository-n8n",
+            "cachedResultUrl": "https://github.com/ThaiTdev/first-repository-n8n"
+          },
+          "filePath": "n8nIA-agent/InsertInVectorDataBase.json",
+          "fileContent": "={{ JSON.stringify($json, null, 2) }}",
+          "commitMessage": "={{ $json.activeVersion.description }} \n=============================\n{{ $json.activeVersion.name }} | {{ $json.activeVersion.authors }}\n\n"
+        },
+        "type": "n8n-nodes-base.github",
+        "typeVersion": 1.1,
+        "position": [
+          896,
+          1152
+        ],
+        "id": "5e808eac-4159-401e-93f6-cf2c7caf97e6",
+        "name": "CREATE FILE",
+        "webhookId": "82a62f5d-61d6-46e7-b655-44f5d9121e79",
+        "notesInFlow": true,
+        "credentials": {
+          "githubOAuth2Api": {
+            "id": "CLNjnxubvSFd7bg1",
+            "name": "GitHub account"
+          }
+        },
+        "onError": "continueErrorOutput"
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "resource": "file",
+          "operation": "get",
+          "owner": {
+            "__rl": true,
+            "value": "={{ $('VARS').item.json.OWNER_GITHUB }}",
+            "mode": "name"
+          },
+          "repository": {
+            "__rl": true,
+            "value": "={{ $('VARS').item.json['REPOSITORY GITHUB'] }}",
+            "mode": "name"
+          },
+          "filePath": "={{ $json.id }}.json",
+          "asBinaryProperty": false,
+          "additionalParameters": {}
+        },
+        "type": "n8n-nodes-base.github",
+        "typeVersion": 1.1,
+        "position": [
+          1120,
+          1168
+        ],
+        "id": "4768fc2b-dc4b-4102-9332-5313bd016e2c",
+        "name": "Get a file",
+        "webhookId": "8fb9c30d-84f9-4fd4-ad1e-3c960f721d39",
+        "notesInFlow": true,
+        "credentials": {
+          "githubOAuth2Api": {
+            "id": "CLNjnxubvSFd7bg1",
+            "name": "GitHub account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "const workflow = $('GET A WORKFLOW').item.json;\nconst sha = $('Get a file').item.json.sha;\n\nreturn [{\n  json: {\n    workflow_id: workflow.id,\n    content: btoa(unescape(encodeURIComponent(JSON.stringify(workflow, null, 2)))),\n    sha: sha,\n    message: (workflow.activeVersion?.description || 'Update') + '\\n=============================\\n' + (workflow.activeVersion?.name || '') + ' | ' + (workflow.activeVersion?.authors || '')\n  }\n}];"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1328,
+          1168
+        ],
+        "id": "a1cffb3c-f4ed-45d2-9562-037b71d0585a",
+        "name": "Preprare HTTP Request"
+      },
+      {
+        "parameters": {
+          "method": "PUT",
+          "url": "=https://api.github.com/repos/{{ $('VARS').item.json.OWNER_GITHUB }}/{{ $('VARS').item.json['REPOSITORY GITHUB'] }}/contents/{{ $json.workflow_id }}.json",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "githubOAuth2Api",
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "message",
+                "value": "={{ $json.message }}"
+              },
+              {
+                "name": "content",
+                "value": "={{ $json.content }}"
+              },
+              {
+                "name": "sha",
+                "value": "={{ $json.sha }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          1552,
+          1168
+        ],
+        "id": "97dc6800-eb6b-412a-8086-4bceb0a602c0",
+        "name": "Execute HTTP Request",
+        "notesInFlow": true,
+        "credentials": {
+          "githubOAuth2Api": {
+            "id": "CLNjnxubvSFd7bg1",
+            "name": "GitHub account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "workflowId": {
+            "__rl": true,
+            "value": "g8S7y933beqthWWz",
+            "mode": "list",
+            "cachedResultUrl": "/workflow/g8S7y933beqthWWz",
+            "cachedResultName": "VERSIONNING"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {},
+            "matchingColumns": [],
+            "schema": [],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": true
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.3,
+        "position": [
+          496,
+          304
+        ],
+        "id": "14b58180-74bc-45d6-b682-80a2ec555526",
+        "name": "VERSIONNING",
+        "notesInFlow": true,
+        "disabled": true
+      },
+      {
+        "parameters": {
+          "events": [
+            "update",
+            "activate"
+          ]
+        },
+        "type": "n8n-nodes-base.n8nTrigger",
+        "typeVersion": 1,
+        "position": [
+          272,
+          304
+        ],
+        "id": "3b914c8b-3a80-4537-8df2-20ae57d01d5f",
+        "name": "N8N TRIGGER1",
+        "disabled": true
+      },
+      {
+        "parameters": {
+          "content": "##  NOEUDS A METTRE DANS D'AUTRES WORKFLOW A VERSIONNER.",
+          "height": 400,
+          "width": 544
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          176,
+          128
+        ],
+        "typeVersion": 1,
+        "id": "b22c8515-4ea3-4e2f-93a4-d737c4e13726",
+        "name": "Sticky Note"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "8b3bb531-18c6-4f8d-a5e4-503cd00d7836",
+                "name": "OWNER_GITHUB",
+                "value": "Thatdev",
+                "type": "string"
+              },
+              {
+                "id": "fb9730e9-e63e-41aa-b615-5a2896d321c9",
+                "name": "REPOSITORY GITHUB",
+                "value": "n8n-cours-1-",
+                "type": "string"
+              }
+            ]
+          },
+          "includeOtherFields": true,
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          544,
+          1152
+        ],
+        "id": "5ca2d6bf-edab-4a33-93c8-dfa8f519d03c",
+        "name": "VARS",
+        "notesInFlow": true
+      }
+    ],
+    "connections": {
+      "N8N TRIGGER": {
+        "main": [
+          [
+            {
+              "node": "VARS",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "PUBLISH": {
+        "main": [
+          [
+            {
+              "node": "VARS",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "GET A WORKFLOW": {
+        "main": [
+          [
+            {
+              "node": "CREATE FILE",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "CREATE FILE": {
+        "main": [
+          [],
+          [
+            {
+              "node": "Get a file",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get a file": {
+        "main": [
+          [
+            {
+              "node": "Preprare HTTP Request",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Preprare HTTP Request": {
+        "main": [
+          [
+            {
+              "node": "Execute HTTP Request",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "N8N TRIGGER1": {
+        "main": [
+          [
+            {
+              "node": "VERSIONNING",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "VARS": {
+        "main": [
+          [
+            {
+              "node": "GET A WORKFLOW",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "thierry thai",
+    "name": "Version 3e48fb67",
+    "description": "",
+    "autosaved": true,
+    "workflowPublishHistory": [
+      {
+        "createdAt": "2026-02-12T21:32:33.870Z",
+        "id": 10,
+        "workflowId": "grisdpic5yLtdaNwvyaVq",
+        "versionId": "3e48fb67-f71e-4c9d-9fb8-a3be5590fd87",
+        "event": "activated",
+        "userId": "8d90f99e-d45a-4723-ae69-16f6b1486e51"
+      }
+    ]
+  }
+}
